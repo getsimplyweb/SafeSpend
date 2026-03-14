@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- ── Primary SEO ── -->
+<title>SafeSpend – Free Affordability Checker | Know Before You Spend</title>
+<meta name="description" content="SafeSpend is a free personal finance tool that tells you instantly if a purchase is safe based on your income, expenses and savings goal. Get an affordability score before you spend.">
+<meta name="keywords" content="affordability checker, can I afford this, budget calculator, personal finance tool, spending checker, savings calculator, monthly budget planner, purchase affordability, free budget tool, SafeSpend">
+<meta name="author" content="SafeSpend">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://safespend.netlify.app/">
+
+<!-- ── Open Graph (Facebook, WhatsApp, LinkedIn) ── -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://safespend.netlify.app/">
+<meta property="og:title" content="SafeSpend – Know Before You Spend">
+<meta property="og:description" content="Enter your income, expenses and savings goal. Check any purchase instantly and get an affordability score from 0–100. Free, fast and private.">
+<meta property="og:image" content="https://safespend.netlify.app/og-image.png">
+<meta property="og:site_name" content="SafeSpend">
+<meta property="og:locale" content="en_IN">
+
+<!-- ── Twitter Card ── -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://safespend.netlify.app/">
+<meta name="twitter:title" content="SafeSpend – Know Before You Spend">
+<meta name="twitter:description" content="Free affordability checker. See if any purchase fits your budget and get a safety score instantly.">
+<meta name="twitter:image" content="https://safespend.netlify.app/og-image.png">
+
+<!-- ── Structured Data (JSON-LD) ── -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "SafeSpend",
+  "url": "https://safespend.netlify.app/",
+  "description": "A free personal finance tool that calculates whether a purchase is affordable based on your monthly income, fixed expenses and savings goal. Get an instant affordability score from 0 to 100.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "All",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  },
+  "featureList": [
+    "Instant affordability score 0–100",
+    "Budget planner with income and expense tracking",
+    "Purchase history saved locally",
+    "Works on mobile and desktop",
+    "No login required"
+  ]
+}
+</script>
+
+<!-- ── Favicon ── -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --white: #ffffff;
+    --black: #111111;
+    --ink: #222222;
+    --mid: #555555;
+    --muted: #999999;
+    --border: #e0e0e0;
+    --safe: #2a7a2a;
+    --safe-bg: #f0f7f0;
+    --safe-border: #b8dbb8;
+    --unsafe: #b02020;
+    --unsafe-bg: #fdf2f2;
+    --unsafe-border: #e8b8b8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #ffffff !important; }
+  body {
+    color: var(--ink);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 48px 16px 80px;
+  }
+  .app { width: 100%; max-width: 520px; }
+  header { margin-bottom: 32px; }
+  .eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  h1 {
+    font-size: clamp(36px, 8vw, 52px); font-weight: 800;
+    color: var(--black); line-height: 1.05; letter-spacing: -0.03em;
+  }
+  .subtitle { margin-top: 8px; font-size: 12px; font-weight: 400; color: var(--muted); }
+  hr { border: none; border-top: 1px solid var(--border); margin-bottom: 28px; }
+  .card {
+    background: #f9f9f9; border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 18px;
+  }
+  .input-grid { display: grid; gap: 12px; }
+  .input-row { display: flex; align-items: center; gap: 14px; }
+  .input-label { font-size: 12px; font-weight: 500; color: var(--mid); min-width: 130px; flex-shrink: 0; }
+  .input-wrap { position: relative; flex: 1; }
+  .rupee {
+    position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+    font-size: 12px; color: var(--muted); pointer-events: none; font-weight: 500;
+  }
+  input[type="number"], input[type="text"] {
+    width: 100%; background: var(--white); border: 1px solid var(--border);
+    border-radius: 7px; padding: 9px 10px 9px 26px; color: var(--ink);
+    font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 600;
+    outline: none; transition: border-color 0.18s; -moz-appearance: textfield;
+  }
+  input[type="text"] { padding-left: 10px; font-weight: 500; }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input:focus { border-color: var(--black); background: var(--white); }
+  input::placeholder { color: var(--muted); font-weight: 400; opacity: 0.7; }
+  .budget-summary {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border);
+  }
+  .budget-item { text-align: center; padding: 0 8px; border-right: 1px solid var(--border); }
+  .budget-item:last-child { border-right: none; }
+  .bi-label {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 5px;
+  }
+  .bi-value { font-size: 16px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+  .bi-value.free-pos { color: var(--safe); }
+  .bi-value.free-neg { color: var(--unsafe); }
+  .warning-banner {
+    margin-top: 14px; background: var(--unsafe-bg); border: 1px solid var(--unsafe-border);
+    border-radius: 7px; padding: 10px 14px; font-size: 11px; font-weight: 500;
+    color: var(--unsafe); display: none;
+  }
+  .warning-banner.show { display: block; }
+  .safe-banner {
+    display: none; align-items: center; justify-content: space-between;
+    background: var(--black); color: var(--white);
+    border-radius: 12px; padding: 20px 24px; margin-bottom: 14px;
+  }
+  .sb-eyebrow {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 4px;
+  }
+  .sb-amount { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; color: #fff; }
+  .sb-sub { font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.4); margin-top: 2px; }
+  .sb-right { font-size: 30px; opacity: 0.2; }
+  .purchase-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .purchase-row input[type="text"] { flex: 1.6; }
+  .purchase-row .input-wrap { flex: 1; }
+  .check-btn {
+    background: var(--black); color: var(--white); border: none; border-radius: 7px;
+    padding: 0 18px; font-family: 'Montserrat', sans-serif; font-size: 12px;
+    font-weight: 700; letter-spacing: 0.05em; cursor: pointer; white-space: nowrap;
+    transition: opacity 0.15s, transform 0.1s; height: 38px;
+  }
+  .check-btn:hover { opacity: 0.72; }
+  .check-btn:active { transform: scale(0.97); }
+  .result { border-radius: 10px; padding: 18px 20px; display: none; animation: fadeUp 0.22s ease; }
+  .result.show { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .result.is-safe  { background: var(--safe-bg);   border: 1px solid var(--safe-border); }
+  .result.is-unsafe{ background: var(--unsafe-bg); border: 1px solid var(--unsafe-border); }
+  .result-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .result-verdict { font-size: 14px; font-weight: 800; letter-spacing: 0.04em; }
+  .is-safe  .result-verdict { color: var(--safe); }
+  .is-unsafe .result-verdict { color: var(--unsafe); }
+  .result-detail {
+    font-size: 12px; font-weight: 400; color: var(--mid);
+    line-height: 1.75; margin-bottom: 10px;
+  }
+  .rh { font-weight: 700; color: var(--ink); }
+  .rh-accent-safe   { font-weight: 700; color: var(--safe); }
+  .rh-accent-unsafe { font-weight: 700; color: var(--unsafe); }
+  .insight-box {
+    margin-top: 10px; padding: 10px 14px; background: rgba(0,0,0,0.04);
+    border-radius: 6px; font-size: 11px; font-weight: 500; color: var(--mid); line-height: 1.65;
+  }
+  .bar-wrap {
+    background: rgba(0,0,0,0.07); border-radius: 99px; height: 4px; overflow: hidden; margin-top: 12px;
+  }
+  .bar-fill { height: 100%; border-radius: 99px; transition: width 0.45s ease; }
+  .is-safe  .bar-fill { background: var(--safe); }
+  .is-unsafe .bar-fill { background: var(--unsafe); }
+  /* single-line budget inputs */
+  .budget-inputs-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .budget-field { display: flex; flex-direction: column; gap: 5px; }
+  .budget-field-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  .card-dark {
+    background: #111111 !important;
+    border-color: #111111 !important;
+  }
+  .card-dark .card-title { color: rgba(255,255,255,0.4); }
+  .card-dark .clear-btn {
+    color: rgba(255,255,255,0.4);
+    border-color: rgba(255,255,255,0.15);
+  }
+  .card-dark .clear-btn:hover { color: #ff8080; border-color: rgba(255,100,100,0.4); }
+  .card-dark .empty-state { color: rgba(255,255,255,0.35); }
+  .card-dark .history-item {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.08);
+  }
+  .card-dark .history-item.safe   { border-left-color: #5cc85c; }
+  .card-dark .history-item.unsafe { border-left-color: #e06060; }
+  .card-dark .hi-name  { color: #ffffff; }
+  .card-dark .hi-date  { color: rgba(255,255,255,0.35); }
+  .card-dark .hi-amount { color: rgba(255,255,255,0.6); }
+  .card-dark .safe   .hi-badge { background: rgba(92,200,92,0.15);  color: #7de07d; border-color: rgba(92,200,92,0.25); }
+  .card-dark .unsafe .hi-badge { background: rgba(224,96,96,0.15);  color: #f08080; border-color: rgba(224,96,96,0.25); }
+  .card-dark .hi-score.green { color: #7de07d; }
+  .card-dark .hi-score.amber { color: #f0c060; }
+  .card-dark .hi-score.red   { color: #f08080; }
+
+  .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .clear-btn {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.08em; color: var(--muted);
+    background: none; border: 1px solid var(--border); border-radius: 5px;
+    padding: 3px 10px; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: color 0.15s, border-color 0.15s;
+  }
+  .clear-btn:hover { color: var(--unsafe); border-color: var(--unsafe-border); }
+  .history-list { display: grid; gap: 8px; }
+  .history-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; background: #fafafa; border: 1px solid var(--border);
+    border-radius: 8px; font-size: 12px; border-left: 3px solid var(--border);
+    animation: fadeUp 0.18s ease;
+  }
+  .history-item.safe   { border-left-color: var(--safe); }
+  .history-item.unsafe { border-left-color: var(--unsafe); }
+  .hi-left { display: flex; flex-direction: column; gap: 2px; }
+  .hi-name { font-weight: 600; color: var(--ink); font-size: 12px; }
+  .hi-date { font-size: 10px; color: var(--muted); font-weight: 400; }
+  .hi-right { display: flex; align-items: center; gap: 10px; }
+  .hi-amount { font-size: 12px; font-weight: 700; color: var(--mid); }
+  .hi-badge {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 99px;
+  }
+  .safe   .hi-badge { background: var(--safe-bg);   color: var(--safe);   border: 1px solid var(--safe-border); }
+  .unsafe .hi-badge { background: var(--unsafe-bg); color: var(--unsafe); border: 1px solid var(--unsafe-border); }
+  .hi-score {
+    font-size: 11px; font-weight: 800; min-width: 32px; text-align: right;
+    letter-spacing: -0.02em;
+  }
+  .hi-score.green { color: #2a7a2a; }
+  .hi-score.amber { color: #a06000; }
+  .hi-score.red   { color: #b02020; }
+
+  .empty-state {
+    font-size: 12px; color: var(--muted); font-weight: 400;
+    text-align: center; padding: 20px; letter-spacing: 0.02em;
+  }
+  /* ── SCORE METER ── */
+  .score-card {
+    background: #f9f9f9;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 24px 24px;
+    margin-bottom: 14px;
+    text-align: center;
+    display: none;
+  }
+  .score-card.show { display: block; animation: fadeUp 0.3s ease; }
+
+  .score-eyebrow {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 18px;
+  }
+
+  /* SVG gauge */
+  .gauge-wrap {
+    position: relative;
+    width: 200px;
+    margin: 0 auto 16px;
+  }
+  .gauge-wrap svg { display: block; overflow: visible; }
+
+  .gauge-track { fill: none; stroke: #eeeeee; stroke-width: 12; stroke-linecap: round; }
+  .gauge-fill  { fill: none; stroke-width: 12; stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.34,1.56,0.64,1), stroke 0.5s ease; }
+
+  .gauge-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -34%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .gauge-score {
+    font-size: 38px; font-weight: 800; letter-spacing: -0.04em;
+    line-height: 1; color: var(--ink);
+    transition: color 0.5s ease;
+  }
+  .gauge-max {
+    font-size: 11px; font-weight: 500; color: var(--muted); margin-top: 2px;
+  }
+
+  /* zone labels */
+  .gauge-labels {
+    display: flex; justify-content: space-between;
+    padding: 0 8px;
+    margin-top: 4px;
+  }
+  .gauge-label {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  /* score tag */
+  .score-tag {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 14px;
+    border-radius: 99px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: background 0.4s, color 0.4s;
+  }
+
+  @media (max-width: 480px) {
+    .input-row { flex-direction: column; align-items: flex-start; gap: 5px; }
+    .input-label { min-width: unset; }
+    .purchase-row { flex-wrap: wrap; }
+    .purchase-row input[type="text"] { flex: 1 0 100%; }
+    .budget-summary { grid-template-columns: 1fr 1fr; }
+    .budget-item:last-child { border-right: none; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 8px; grid-column: 1/-1; }
+    .budget-inputs-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <h1>SafeSpend</h1>
+    <p class="subtitle">Know before you spend.</p>
+  </header>
+  <hr>
+
+  <!-- BUDGET (single line, top) -->
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px">Monthly Budget</div>
+    <div class="budget-inputs-row">
+      <div class="budget-field">
+        <span class="budget-field-label">Income</span>
+        <div class="input-wrap">
+          <span class="rupee">₹</span>
+          <input type="number" id="income" placeholder="80000" min="0">
+        </div>
+      </div>
+      <div class="budget-field">
+        <span class="budget-field-label">Fixed Expenses</span>
+        <div class="input-wrap">
+          <span class="rupee">₹</span>
+          <input type="number" id="expenses" placeholder="45000" min="0">
+        </div>
+      </div>
+      <div class="budget-field">
+        <span class="budget-field-label">Savings Goal</span>
+        <div class="input-wrap">
+          <span class="rupee">₹</span>
+          <input type="number" id="savings" placeholder="15000" min="0">
+        </div>
+      </div>
+    </div>
+    <div class="budget-summary">
+      <div class="budget-item">
+        <div class="bi-label">Income</div>
+        <div class="bi-value" id="disp-income">—</div>
+      </div>
+      <div class="budget-item">
+        <div class="bi-label">Locked</div>
+        <div class="bi-value" id="disp-locked" style="color:var(--muted)">—</div>
+      </div>
+      <div class="budget-item">
+        <div class="bi-label">Free to Spend</div>
+        <div class="bi-value free-pos" id="disp-free">—</div>
+      </div>
+    </div>
+    <div class="warning-banner" id="warning-banner">
+      ⚠ Expenses + savings exceed income. Time to review your budget.
+    </div>
+  </div>
+
+  <!-- SCORE METER -->
+  <div class="score-card" id="score-card">
+    <div class="score-eyebrow">Affordability Score</div>
+    <div class="gauge-wrap">
+      <svg viewBox="0 0 200 120" width="200" height="120">
+        <!-- track: half-circle from 180° to 0°, r=80, cx=100,cy=100 -->
+        <!-- circumference of half circle = π*r = 251.33 -->
+        <path class="gauge-track"
+          d="M 20,100 A 80,80 0 0,1 180,100"
+          stroke-dasharray="251.33"
+          stroke-dashoffset="0"
+        />
+        <path class="gauge-fill" id="gauge-fill"
+          d="M 20,100 A 80,80 0 0,1 180,100"
+          stroke-dasharray="251.33"
+          stroke-dashoffset="251.33"
+          stroke="#111"
+        />
+      </svg>
+      <div class="gauge-center">
+        <div class="gauge-score" id="gauge-score">—</div>
+        <div class="gauge-max">out of 100</div>
+      </div>
+    </div>
+    <div class="gauge-labels">
+      <span class="gauge-label">Risky</span>
+      <span class="gauge-label">Caution</span>
+      <span class="gauge-label">Safe</span>
+    </div>
+    <div class="score-tag" id="score-tag"></div>
+  </div>
+
+  <!-- 1. PURCHASE CHECKER -->
+  <div class="card">
+    <div class="card-title">Check a Purchase</div>
+    <div class="purchase-row">
+      <input type="text" id="p-name" placeholder="What are you buying?">
+      <div class="input-wrap">
+        <span class="rupee">₹</span>
+        <input type="number" id="p-amount" placeholder="Amount" min="0">
+      </div>
+      <button class="check-btn" onclick="checkPurchase()">Check →</button>
+    </div>
+    <div class="result" id="result">
+      <div class="result-header">
+        <span id="r-icon" style="font-size:15px;font-weight:800"></span>
+        <span class="result-verdict" id="r-verdict"></span>
+      </div>
+      <div class="result-detail" id="r-detail"></div>
+      <div class="insight-box" id="r-insight"></div>
+      <div class="bar-wrap"><div class="bar-fill" id="r-bar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+
+  <!-- 4. HISTORY -->
+  <div class="card">
+    <div class="history-header">
+      <div class="card-title" style="margin-bottom:0">History</div>
+      <div id="clear-wrap">
+        <button class="clear-btn" id="clear-btn-1" onclick="showClearConfirm()">Clear all</button>
+        <span id="clear-confirm" style="display:none; font-size:11px; font-weight:600; color:var(--muted);">
+          Sure? <button class="clear-btn" style="color:var(--unsafe);border-color:var(--unsafe-border);margin-left:4px;" onclick="clearHistory()">Yes, clear</button>
+          <button class="clear-btn" style="margin-left:4px;" onclick="hideClearConfirm()">Cancel</button>
+        </span>
+      </div>
+    </div>
+    <div class="history-list" id="history-list">
+      <div class="empty-state">No checks yet. Try checking a purchase above.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+  const fmt = n => '₹' + Math.round(n).toLocaleString('en-IN');
+  const HIST_KEY   = 'afford_history_v2';
+  const BUDGET_KEY = 'afford_budget_v1';
+
+  // ── BUDGET PERSISTENCE
+  function saveBudget() {
+    try {
+      localStorage.setItem(BUDGET_KEY, JSON.stringify({
+        income:   document.getElementById('income').value,
+        expenses: document.getElementById('expenses').value,
+        savings:  document.getElementById('savings').value,
+      }));
+    } catch(e){}
+  }
+  function loadBudget() {
+    try {
+      const b = JSON.parse(localStorage.getItem(BUDGET_KEY));
+      if (b && b.income) {
+        document.getElementById('income').value   = b.income;
+        document.getElementById('expenses').value = b.expenses;
+        document.getElementById('savings').value  = b.savings;
+        return;
+      }
+    } catch(e){}
+    document.getElementById('income').value   = 80000;
+    document.getElementById('expenses').value = 45000;
+    document.getElementById('savings').value  = 15000;
+  }
+
+  // ── RECALCULATE
+  function getVals() {
+    return {
+      income:   parseFloat(document.getElementById('income').value)   || 0,
+      expenses: parseFloat(document.getElementById('expenses').value) || 0,
+      savings:  parseFloat(document.getElementById('savings').value)  || 0,
+    };
+  }
+  function recalculate() {
+    saveBudget();
+    const { income, expenses, savings } = getVals();
+    const locked = expenses + savings;
+    const free   = income - locked;
+    document.getElementById('disp-income').textContent = income ? fmt(income) : '—';
+    document.getElementById('disp-locked').textContent = locked ? fmt(locked) : '—';
+    const freeEl = document.getElementById('disp-free');
+    freeEl.textContent = income ? fmt(Math.max(free, 0)) : '—';
+    freeEl.className   = 'bi-value ' + (free < 0 ? 'free-neg' : 'free-pos');
+    document.getElementById('warning-banner').classList.toggle('show', income > 0 && free < 0);
+  }
+
+  // ── INSIGHTS
+  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function safeInsights(amount, free, savings, income) {
+    const remaining    = free - amount;
+    const pctOfFree    = Math.round((amount / free) * 100);
+    const pctOfIncome  = income ? Math.round((amount / income) * 100) : 0;
+    const timesAfford  = Math.floor(free / amount);
+    const dailyIncome  = income / 30;
+    const daysEquiv    = Math.round(amount / dailyIncome);
+    return pick([
+      `This is ${pctOfFree}% of your free budget. You still have ${fmt(remaining)} left untouched this month.`,
+      `At your income level, this equals roughly ${daysEquiv} day${daysEquiv !== 1 ? 's' : ''} of earning. A reasonable trade-off.`,
+      `Just ${pctOfIncome}% of your monthly income — well within healthy spending territory.`,
+      `You could make this purchase ${timesAfford} more time${timesAfford !== 1 ? 's' : ''} this month and your savings would still be fully intact.`,
+      savings > 0
+        ? `Your savings goal of ${fmt(savings)} stays untouched. That's the whole point of planning ahead.`
+        : `You're spending from your discretionary budget — exactly what it's designed for.`,
+      `After this, ${fmt(remaining)} remains. Enough cushion for life's little surprises.`,
+      `Green light. Enjoy the purchase — you planned for exactly this kind of spending.`,
+      `${pctOfIncome}% of income on a single purchase is considered very healthy by most budgeting standards.`,
+    ]);
+  }
+
+  function unsafeInsights(amount, free, savings, income) {
+    const overshoot   = amount - free;
+    const savingsDip  = savings > 0 ? Math.round((overshoot / savings) * 100) : 0;
+    const dailyIncome = income / 30;
+    const daysEquiv   = Math.round(amount / dailyIncome);
+    const monthsSave  = Math.ceil(amount / Math.max(free, 1));
+    const altBudget   = Math.round(free * 0.9);
+    return pick([
+      `You're ${fmt(overshoot)} short. ${savings > 0 ? `Covering the gap would dip into ${savingsDip}% of your savings goal.` : 'Your discretionary budget is already fully allocated.'}`,
+      `This purchase equals ${daysEquiv} day${daysEquiv !== 1 ? 's' : ''} of your income. Worth pausing to ask if it's the right moment.`,
+      `If you set aside ${fmt(Math.ceil(amount / 3))} each month for 3 months, you could buy this without any financial stress.`,
+      `Could you find an alternative under ${fmt(altBudget)}? That amount fits comfortably in your current budget.`,
+      `${free > 0 ? `Your budget covers ${fmt(free)} of this — that's ${Math.round((free/amount)*100)}% of the way there.` : 'Your full discretionary budget is spoken for this month.'}`,
+      savings > 0
+        ? `You've worked hard to set a savings goal of ${fmt(savings)}. This purchase would put pressure on it.`
+        : `Setting even a small monthly savings goal would make these boundary calls a lot clearer.`,
+      `Consider waiting ${monthsSave} more month${monthsSave !== 1 ? 's' : ''} of saving up before pulling the trigger.`,
+      `Sometimes the best financial decision is a well-timed delay. This might be one of those moments.`,
+    ]);
+  }
+
+  // ── CHECK
+  function checkPurchase() {
+    const { income, expenses, savings } = getVals();
+    const free   = income - expenses - savings;
+    const amount = parseFloat(document.getElementById('p-amount').value) || 0;
+    const name   = document.getElementById('p-name').value.trim() || 'This purchase';
+    if (!income) { document.getElementById('income').focus(); return; }
+    if (!amount) { document.getElementById('p-amount').focus(); return; }
+
+    const isSafe = amount <= free;
+    const pct    = free > 0 ? Math.min((amount / free) * 100, 100) : 100;
+    const result = document.getElementById('result');
+    result.className = 'result show ' + (isSafe ? 'is-safe' : 'is-unsafe');
+
+    document.getElementById('r-icon').textContent    = isSafe ? '✓' : '✕';
+    document.getElementById('r-verdict').textContent = isSafe ? 'Good to go' : 'Not safe right now';
+
+    if (isSafe) {
+      const remaining = free - amount;
+      document.getElementById('r-detail').innerHTML =
+        `<span class="rh">${name}</span> costs <span class="rh">${fmt(amount)}</span>. ` +
+        `Your free budget is <span class="rh">${fmt(free)}</span>, leaving ` +
+        `<span class="rh-accent-safe">${fmt(remaining)}</span> after this purchase.`;
+    } else {
+      const overshoot  = amount - free;
+      const savingsPct = savings > 0 ? Math.round((amount / savings) * 100) : null;
+      let detail = `<span class="rh">${name}</span> costs <span class="rh">${fmt(amount)}</span>, ` +
+        `which is <span class="rh-accent-unsafe">${fmt(overshoot)}</span> over your safe budget of <span class="rh">${fmt(Math.max(free,0))}</span>.`;
+      if (savingsPct !== null)
+        detail += ` <span class="rh-accent-unsafe">Would reduce savings by ${savingsPct}%.</span>`;
+      document.getElementById('r-detail').innerHTML = detail;
+    }
+
+    document.getElementById('r-insight').textContent =
+      isSafe ? safeInsights(amount, free, savings, income) : unsafeInsights(amount, free, savings, income);
+    document.getElementById('r-bar').style.width = pct + '%';
+
+    // ── SCORE METER
+    updateScore(amount, free, income);
+
+    // Scroll to score meter
+    document.getElementById('score-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Save history
+    const score = calcScore(amount, free);
+    const hist = loadHistory();
+    hist.unshift({ name, amount, isSafe, score, date: new Date().toISOString() });
+    saveHistory(hist.slice(0, 30));
+    renderHistory();
+  }
+
+  // ── HISTORY STORAGE
+  function loadHistory() {
+    try { return JSON.parse(localStorage.getItem(HIST_KEY)) || []; } catch(e) { return []; }
+  }
+  function saveHistory(h) {
+    try { localStorage.setItem(HIST_KEY, JSON.stringify(h)); } catch(e) {}
+  }
+  function showClearConfirm() {
+    document.getElementById('clear-btn-1').style.display = 'none';
+    document.getElementById('clear-confirm').style.display = 'inline';
+  }
+  function hideClearConfirm() {
+    document.getElementById('clear-btn-1').style.display = 'inline';
+    document.getElementById('clear-confirm').style.display = 'none';
+  }
+  function clearHistory() {
+    saveHistory([]);
+    renderHistory();
+    hideClearConfirm();
+  }
+  function relativeDate(iso) {
+    const d = new Date(iso), now = new Date();
+    const diff = Math.floor((now - d) / 1000);
+    if (diff < 60)    return 'just now';
+    if (diff < 3600)  return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    const days = Math.floor(diff/86400);
+    if (days === 1) return 'yesterday';
+    if (days < 7)  return days + ' days ago';
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  }
+  function renderHistory() {
+    const hist = loadHistory();
+    const list = document.getElementById('history-list');
+    if (!hist.length) {
+      list.innerHTML = '<div class="empty-state">No checks yet. Try checking a purchase above.</div>';
+      return;
+    }
+    list.innerHTML = hist.slice(0,20).map(h => {
+      const s = h.score ?? (h.isSafe ? 75 : 20);
+      const scoreClass = s >= 61 ? 'green' : s >= 31 ? 'amber' : 'red';
+      return `
+      <div class="history-item ${h.isSafe ? 'safe' : 'unsafe'}">
+        <div class="hi-left">
+          <span class="hi-name">${h.name}</span>
+          <span class="hi-date">${relativeDate(h.date)}</span>
+        </div>
+        <div class="hi-right">
+          <span class="hi-amount">${fmt(h.amount)}</span>
+          <span class="hi-score ${scoreClass}">${s}</span>
+          <span class="hi-badge">${h.isSafe ? 'Safe' : 'Unsafe'}</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── SCORE METER
+  function calcScore(amount, free) {
+    if (free <= 0) return 0;
+    const ratio = amount / free;
+    if (ratio <= 0) return 100;
+    if (ratio <= 1) return Math.round(100 - ratio * 50);
+    return Math.max(0, Math.round(50 - (ratio - 1) * 50));
+  }
+
+  function updateScore(amount, free, income) {
+    const score = calcScore(amount, free);
+
+    // Colour zones: 0-30 red, 31-60 amber, 61-100 green
+    const color = score >= 61 ? '#2a7a2a' : score >= 31 ? '#a06000' : '#b02020';
+    const tagBg = score >= 61 ? '#f0f7f0' : score >= 31 ? '#fdf6ec' : '#fdf2f2';
+    const tagBorder = score >= 61 ? '#b8dbb8' : score >= 31 ? '#f0d090' : '#e8b8b8';
+    const label = score >= 61 ? 'Comfortable' : score >= 31 ? 'Borderline' : 'Risky';
+
+    // Arc: half-circle path total length ≈ 251.33
+    const arcLen = 251.33;
+    const offset = arcLen - (score / 100) * arcLen;
+
+    const card     = document.getElementById('score-card');
+    const fill     = document.getElementById('gauge-fill');
+    const scoreEl  = document.getElementById('gauge-score');
+    const tag      = document.getElementById('score-tag');
+
+    card.classList.add('show');
+    fill.style.strokeDashoffset = offset;
+    fill.style.stroke = color;
+    scoreEl.style.color = color;
+    tag.style.background   = tagBg;
+    tag.style.color        = color;
+    tag.style.border       = `1px solid ${tagBorder}`;
+    tag.textContent        = label;
+
+    // Animate number count-up
+    const start = parseInt(scoreEl.textContent) || 0;
+    const end   = score;
+    const dur   = 700;
+    const t0    = performance.now();
+    function tick(now) {
+      const p = Math.min((now - t0) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      scoreEl.textContent = Math.round(start + (end - start) * ease);
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ── INIT
+  ['income','expenses','savings'].forEach(id =>
+    document.getElementById(id).addEventListener('input', recalculate));
+  ['p-name','p-amount'].forEach(id =>
+    document.getElementById(id).addEventListener('keydown', e => e.key === 'Enter' && checkPurchase()));
+  loadBudget();
+  recalculate();
+  renderHistory();
+</script>
+</body>
+</html>
